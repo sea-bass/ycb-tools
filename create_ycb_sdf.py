@@ -14,7 +14,7 @@ will use the tsdf meshes which are of lower quality.
 We recommend ensuring that you've enabled `google_16k` as one of the file 
 types to download in the `download_ycb_dataset.py` script.
 
-Massachusetts Institute of Technology, 2020
+Sebastian Castro 2020
 """
 
 # Define downsample ratio for mesh. This makes Gazebo run much faster.
