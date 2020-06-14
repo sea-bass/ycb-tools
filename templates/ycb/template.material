@@ -1,0 +1,14 @@
+material $MODEL_SHORT
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        // Relative to the location of the material script
+        texture ../$MODEL_LONG/$MESH_TYPE/$TEXTURE_FILE
+      }
+    }
+  }
+}
