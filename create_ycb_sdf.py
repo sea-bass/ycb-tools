@@ -86,7 +86,7 @@ if __name__=="__main__":
                     downsampled_mesh = mesh.submesh((face_idx,), append=True)
                     with open(os.path.join(model_folder, "downsampled.obj"), "w") as f:
                         downsampled_mesh.export(f, "obj")
-                    collision_mesh_text = model_long + "downsampled.obj"
+                    collision_mesh_text = model_long + "/downsampled.obj"
                 else:
                     collision_mesh_text = model_long + "/" + mesh_type + "/textured.obj"
 
