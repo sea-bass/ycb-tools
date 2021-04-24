@@ -1,5 +1,6 @@
 import os
 import trimesh
+import argparse
 import numpy as np
 
 """
@@ -14,27 +15,35 @@ will use the tsdf meshes which are of lower quality.
 We recommend ensuring that you've enabled `google_16k` as one of the file 
 types to download in the `download_ycb_dataset.py` script.
 
-Sebastian Castro 2020
+Sebastian Castro 2020-2021
 """
 
-# Define downsample ratio for mesh. This makes Gazebo run much faster.
-downsample_ratio = 0.33
-
 # Define folders
-ycb_folder = os.path.join("models", "ycb")
-template_folder = os.path.join("templates", "ycb")
+default_ycb_folder = os.path.join("models", "ycb")
+default_template_folder = os.path.join("templates", "ycb")
 
 if __name__=="__main__":
 
     print("Creating files to use YCB objects in Gazebo...")
 
+    # Parse arguments
+    parser = argparse.ArgumentParser(description="YCB Model Importer")
+    parser.add_argument("--downsample-ratio", type=float, default=1,
+                        help="Mesh vertex downsample ratio (set to 1 to leave meshes as they are)")
+    parser.add_argument("--template-folder", type=str, default=default_template_folder,
+                        help="Location of YCB models (defaults to ./templates/ycb)")
+    parser.add_argument("--ycb-folder", type=str, default=default_ycb_folder,
+                        help="Location of YCB models (defaults to ./models/ycb)")
+
+    args = parser.parse_args()
+
     # Get the list of all downloaded mesh folders
-    folder_names = os.listdir(ycb_folder)
+    folder_names = os.listdir(args.ycb_folder)
 
     # Get the template files to copy over
-    config_template_file = os.path.join(template_folder, "model.config")
-    model_template_file = os.path.join(template_folder, "template.sdf")
-    material_template_file = os.path.join(template_folder, "template.material")
+    config_template_file = os.path.join(args.template_folder, "model.config")
+    model_template_file = os.path.join(args.template_folder, "template.sdf")
+    material_template_file = os.path.join(args.template_folder, "template.material")
     with open(config_template_file,"r") as f:
         config_template_text = f.read()
     with open(model_template_file,"r") as f:
@@ -51,7 +60,7 @@ if __name__=="__main__":
                 # Extract model name and folder
                 model_long = folder
                 model_short = folder[4:]
-                model_folder = os.path.join(ycb_folder, model_long)
+                model_folder = os.path.join(args.ycb_folder, model_long)
 
                 # Check if there are Google meshes; else use the TSDF folder
                 if "google_16k" in os.listdir(model_folder):
@@ -74,12 +83,12 @@ if __name__=="__main__":
                 eul = trimesh.transformations.euler_from_matrix(np.linalg.inv(tf), axes="sxyz")
                 com_vec.extend(list(eul))
                 com_text = str(com_vec)
-                com_text = com_text.replace("[","")
-                com_text = com_text.replace("]","")
-                com_text = com_text.replace(",","")
+                com_text = com_text.replace("[", "")
+                com_text = com_text.replace("]", "")
+                com_text = com_text.replace(",", "")
                 
                 # Create a downsampled mesh file with a subset of vertices and faces
-                if downsample_ratio < 1:
+                if args.downsample_ratio < 1:
                     mesh_pts = mesh.vertices.shape[0]
                     num_pts = int(mesh_pts * downsample_ratio)
                     (_, face_idx) = mesh.sample(num_pts, True)
