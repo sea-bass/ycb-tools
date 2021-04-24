@@ -90,7 +90,7 @@ if __name__=="__main__":
                 # Create a downsampled mesh file with a subset of vertices and faces
                 if args.downsample_ratio < 1:
                     mesh_pts = mesh.vertices.shape[0]
-                    num_pts = int(mesh_pts * downsample_ratio)
+                    num_pts = int(mesh_pts * args.downsample_ratio)
                     (_, face_idx) = mesh.sample(num_pts, True)
                     downsampled_mesh = mesh.submesh((face_idx,), append=True)
                     with open(os.path.join(model_folder, "downsampled.obj"), "w") as f:
